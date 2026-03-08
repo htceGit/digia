@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digia | Admin</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: {} }, darkMode: 'class' }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- TomSelect for Autocomplete -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.default.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
+    <link rel="stylesheet" href="assets/css/styles.css?bust=1772917785">
+</head>
+
+<body class="bg-slate-900 text-slate-200 min-h-screen flex hidden" id="pageBody">
+    <script>if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme');</script>
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="w-64 glass-card border-r border-slate-700/50 flex flex-col transition-all duration-300 relative">
+
+        <!-- Collapse Toggle Button -->
+        <button id="btnToggleSidebar"
+            class="absolute -right-3 top-6 w-6 h-6 bg-slate-700 border border-slate-600 rounded-full text-slate-300 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-colors z-50">
+            <i class="ph ph-caret-left text-xs" id="iconToggleSidebar"></i>
+        </button>
+
+        <div class="h-20 flex items-center justify-center border-b border-slate-700/50 px-6 overflow-hidden">
+            <!-- Full White Logo -->
+            <img src="assets/img/logo/digia-white.svg" alt="DigIA" class="h-8 object-contain logo-large">
+            <!-- Icon Only Logo (For when collapsed) -->
+            <img src="assets/img/logo/digia-white.svg" alt="D" class="h-8 object-cover w-10 object-left logo-small"
+                style="object-position: 0 0;">
+        </div>
+
+        <div class="p-4 flex-1 overflow-hidden">
+            <p class="text-xs uppercase text-slate-500 font-semibold tracking-wider mb-4 px-3 menu-text">Menu</p>
+            <nav class="space-y-2">
+                <a href="operacional.html"
+                    class="flex items-center px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg transition-colors overflow-hidden whitespace-nowrap"
+                    title="Painel Operacional">
+                    <i class="ph ph-truck text-xl min-w-[1.25rem]"></i> <span class="ml-3 menu-text">Painel
+                        Operacional</span>
+                </a>
+                <a href="#"
+                    class="flex items-center px-4 py-3 bg-indigo-500/10 text-indigo-400 rounded-xl font-medium transition-all group"
+                    title="Parâmetros">
+                    <i class="ph ph-gear text-xl min-w-[1.25rem]"></i> <span class="ml-3 menu-text">Parâmetros</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="p-4 border-t border-slate-700/50 overflow-hidden">
+            <div class="flex items-center mb-4 px-2">
+                <div class="w-10 h-10 min-w-[2.5rem] rounded-full bg-indigo-400 flex items-center justify-center font-bold text-lg uppercase"
+                    id="avatarLetter">A</div>
+                <div class="ml-3 menu-text">
+                    <div class="text-sm font-medium text-white shadow-sm truncate w-32" id="headerUserName">
+                        Carregando...</div>
+                    <div class="text-xs text-slate-400" id="headerUserRole">Admin</div>
+                </div>
+            </div>
+            <button id="btnLogout"
+                class="w-full flex items-center px-4 py-2 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-colors overflow-hidden whitespace-nowrap"
+                title="Sair">
+                <i class="ph ph-sign-out text-xl min-w-[1.25rem]"></i> <span class="ml-3 menu-text">Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <!-- Background Decorators -->
+        <div
+            class="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-indigo-900 rounded-full mix-blend-multiply filter blur-[150px] opacity-20 pointer-events-none">
+        </div>
+
+        <header
+            class="h-20 border-b border-slate-700/50 flex items-center justify-between px-8 glass sticky top-0 z-10">
+            <h1 class="text-2xl font-semibold text-white">Parâmetros Gerais</h1>
+        </header>
+
+        <div class="p-8 overflow-y-auto flex-1 z-10" id="mainScroll">
+
+            <!-- Cascading Hierarchy Content -->
+            <div id="hierarchy-container" class="animate-fade-in w-full max-w-5xl">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-xl font-medium text-slate-200">Parâmetros de Operações e IA</h2>
+                        <p class="text-sm text-slate-400 mt-1">Gerencie Operações, Documentos e Tags em cascata.</p>
+                    </div>
+                    <button onclick="window.AdminPage.openOperationModal()"
+                        class="btn-primary w-auto flex items-center py-2"><i class="ph ph-plus mr-2"></i> Nova
+                        Operação
+                    </button>
+                </div>
+
+                <div id="tree-root" class="space-y-4">
+                    <!-- Tree will be rendered here via JS -->
+                    <div class="p-8 text-center text-slate-500">
+                        <div class="loader mx-auto mb-4"></div>
+                        Carregando estrutura...
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="assets/js/app.js?bust=1772917782"></script>
+    <script>
+        // Initialize page logic when app.js loads profile
+        window.initPage = () => {
+            if (window.AppState.profile.role !== 'admin') {
+                window.location.href = 'operacional.html';
+                return;
+            }
+            document.getElementById('pageBody').classList.remove('hidden');
+            const nameStr = window.AppState.profile.full_name || 'Admin';
+            document.getElementById('avatarLetter').innerText = nameStr.charAt(0).toUpperCase();
+
+            // Notify app.js to initialize Admin Page functions 
+            if (typeof window.initAdminFunctions === 'function') {
+                window.initAdminFunctions();
+                window.AdminPage.loadData();
+            }
+        };
+    </script>
+</body>
+
+</html>

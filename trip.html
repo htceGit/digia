@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digia | Detalhes da Viagem</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: {} }, darkMode: 'class' }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <link rel="stylesheet" href="assets/css/styles.css?bust=1772917781">
+    <style>
+        .doc-card {
+            transition: all 0.3s ease;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.2);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .status-pending {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-identified {
+            background-color: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .status-failed {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-900 text-slate-200 min-h-screen flex hidden" id="pageBody">
+    <script>if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme');</script>
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="w-64 glass-card border-r border-slate-700/50 flex flex-col transition-all duration-300 relative z-20 hidden md:flex">
+
+        <!-- Collapse Toggle Button -->
+        <button id="btnToggleSidebar"
+            class="absolute -right-3 top-6 w-6 h-6 bg-slate-700 border border-slate-600 rounded-full text-slate-300 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-colors z-50">
+            <i class="ph ph-caret-left text-xs" id="iconToggleSidebar"></i>
+        </button>
+
+        <div class="h-20 flex items-center justify-center border-b border-slate-700/50 px-6 overflow-hidden">
+            <!-- Full White Logo -->
+            <img src="assets/img/logo/digia-white.svg" alt="DigIA" class="h-8 object-contain logo-large">
+            <!-- Icon Only Logo -->
+            <img src="assets/img/logo/digia-white.svg" alt="D" class="h-8 object-cover w-10 object-left logo-small"
+                style="object-position: 0 0;">
+        </div>
+
+        <div class="p-4 flex-1 overflow-hidden">
+            <p class="text-xs uppercase text-slate-500 font-semibold tracking-wider mb-4 px-3 menu-text">Menu</p>
+            <nav class="space-y-2">
+                <a href="operacional.html"
+                    class="flex items-center px-4 py-3 bg-indigo-600/20 text-indigo-400 rounded-lg transition-colors overflow-hidden whitespace-nowrap"
+                    title="Painel Operacional">
+                    <i class="ph ph-truck text-xl min-w-[1.25rem]"></i> <span class="ml-3 menu-text">Painel
+                        Operacional</span>
+                </a>
+                <a href="admin.html"
+                    class="flex items-center px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-all group"
+                    title="Parâmetros">
+                    <i class="ph ph-gear text-xl min-w-[1.25rem]"></i> <span class="ml-3 menu-text">Parâmetros</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="p-4 border-t border-slate-700/50 overflow-hidden">
+            <div class="flex items-center mb-4 px-2">
+                <div class="w-10 h-10 min-w-[2.5rem] rounded-full bg-indigo-400 flex items-center justify-center font-bold text-lg uppercase"
+                    id="avatarLetter">U</div>
+                <div class="ml-3 menu-text">
+                    <div class="text-sm font-medium text-white shadow-sm truncate w-32" id="headerUserName">...</div>
+                    <div class="text-xs text-slate-400" id="headerUserRole">Operacional</div>
+                </div>
+            </div>
+            <button id="btnLogout"
+                class="w-full flex items-center px-4 py-2 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-colors overflow-hidden whitespace-nowrap"
+                title="Sair">
+                <i class="ph ph-sign-out text-xl min-w-[1.25rem]"></i> <span class="ml-3 menu-text">Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative z-10">
+
+        <!-- Header -->
+        <header class="h-20 border-b border-slate-700/50 flex items-center px-8 glass sticky top-0 z-10">
+            <a href="operacional.html"
+                class="mr-4 text-slate-400 hover:text-white transition-colors bg-slate-800 p-2 rounded-lg">
+                <i class="ph ph-arrow-left text-xl"></i>
+            </a>
+            <div>
+                <h1 class="text-xl font-semibold text-white flex items-center gap-3">
+                    Viagem: <span id="tripIdentifier" class="text-indigo-400">Carregando...</span>
+                </h1>
+                <p class="text-sm text-slate-400" id="tripMetadata">...</p>
+            </div>
+        </header>
+
+        <div class="p-8 overflow-y-auto flex-1 z-10 animate-fade-in" id="mainScroll">
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full">
+
+                <!-- Upload Area (Left col) -->
+                <div class="lg:col-span-1 flex flex-col h-full">
+                    <h2 class="text-lg font-medium text-white mb-4 flex items-center gap-2">
+                        <i class="ph ph-upload-simple"></i> Enviar Documentos
+                    </h2>
+
+                    <div class="glass-card rounded-2xl flex-1 flex flex-col justify-center items-center p-8 border border-slate-700/50 dropzone text-center relative overflow-hidden"
+                        id="dropzone">
+
+                        <input type="file" id="fileInput" class="hidden" multiple accept="image/*,application/pdf">
+
+                        <div
+                            class="w-20 h-20 rounded-full bg-indigo-600/10 flex items-center justify-center mb-6 text-indigo-500">
+                            <i class="ph ph-file-arrow-up text-4xl"></i>
+                        </div>
+                        <h3 class="text-xl font-medium text-white mb-2">Arraste seus arquivos aqui</h3>
+                        <p class="text-slate-400 text-sm mb-6 max-w-[250px]">Ou clique para selecionar imagens e PDFs
+                            digitalizados (recibos, canhotos, etc).</p>
+
+                        <button onclick="document.getElementById('fileInput').click()"
+                            class="btn-primary py-2 px-6 w-auto inline-flex items-center">
+                            <i class="ph ph-folder-open mr-2"></i> Selecionar Arquivos
+                        </button>
+                    </div>
+
+                    <div class="mt-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 text-sm text-slate-400">
+                        <p class="flex items-start gap-2">
+                            <i class="ph ph-info text-indigo-400 mt-0.5 text-lg"></i>
+                            Os documentos enviados entrarão na fila de Análise IA para classificação e leitura de tags
+                            (backend futuro).
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Documents List (Right col) -->
+                <div class="lg:col-span-2 flex flex-col h-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-medium text-white flex items-center gap-2">
+                            <i class="ph ph-files text-indigo-400"></i> Documentos Digitalizados
+                        </h2>
+                        <span class="text-sm text-slate-400 px-3 py-1 bg-slate-800 rounded-full" id="docCount">0
+                            enviados</span>
+                    </div>
+
+                    <!-- Category Tabs -->
+                    <div id="documentTabs"
+                        class="flex overflow-x-auto gap-2 mb-4 pb-2 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+                        <!-- Populated dynamically by JS -->
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto p-1 pr-2 space-y-4" id="documentsList">
+                        <!-- Example loading skeleton -->
+                        <div class="p-6 text-center text-slate-500 mt-10">
+                            <div class="loader mx-auto mb-4"></div>
+                            Buscando documentos...
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Image Preview Modal -->
+    <div id="imageModal"
+        class="fixed inset-0 bg-slate-900/90 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden max-w-5xl w-full max-h-[90vh] flex flex-col shadow-2xl transform scale-95 transition-transform duration-300"
+            id="imageModalContent">
+            <div class="flex justify-between items-center p-4 border-b border-slate-700/50 bg-slate-800/80">
+                <h3 class="text-lg font-medium text-white flex items-center gap-2">
+                    <i class="ph ph-image text-indigo-400"></i> Visualização
+                </h3>
+                <button onclick="window.closeImageModal()"
+                    class="text-slate-400 hover:text-white transition-colors bg-slate-700/50 p-2 rounded-lg">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div class="p-4 flex-1 overflow-auto flex justify-center items-center bg-slate-900/50 min-h-[50vh]">
+                <img id="modalImg" src="" alt="Document Preview"
+                    class="max-w-full max-h-[70vh] object-contain rounded drop-shadow-lg">
+            </div>
+        </div>
+    </div>
+
+    <!-- Tag History & Review Modal -->
+    <div id="tagHistoryModal"
+        class="fixed inset-0 bg-slate-900/90 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden max-w-lg w-full flex flex-col shadow-2xl transform scale-95 transition-transform duration-300"
+            id="tagHistoryModalContent">
+            <!-- Header -->
+            <div class="flex justify-between items-center p-4 border-b border-slate-700/50 bg-slate-800/80">
+                <h3 class="text-lg font-medium text-white flex items-center gap-2">
+                    <i class="ph ph-clock-counter-clockwise text-indigo-400"></i> Auditoria da Tag
+                </h3>
+                <button onclick="window.closeTagHistoryModal()"
+                    class="text-slate-400 hover:text-white transition-colors bg-slate-700/50 p-2 rounded-lg">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 flex flex-col gap-6 max-h-[60vh] overflow-y-auto">
+
+                <!-- Tag Origin Info -->
+                <div class="flex flex-col gap-1 pb-4 border-b border-slate-700/50">
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-widest hidden"
+                        id="tagModalIdStore"></div>
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-widest hidden"
+                        id="tagModalCurrentValStore"></div>
+                    <h4 class="text-base text-white font-medium" id="tagModalTitle">Nome da Tag</h4>
+                    <p class="text-sm text-slate-400 mt-1"><span class="font-medium text-slate-300">IA Analisou:</span>
+                        <span id="tagModalAIResponse" class="italic">...</span>
+                    </p>
+                </div>
+
+                <!-- History Timeline -->
+                <div class="flex flex-col gap-4" id="tagModalTimeline">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Action Area -->
+                <div class="mt-2 bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
+                    <h5 id="tagModalActionTitle" class="text-sm font-medium mb-3 text-white">Salvar Nova Decisão</h5>
+                    <textarea id="tagModalJustification" rows="2"
+                        class="w-full bg-slate-800 border border-slate-600 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-slate-500 mb-3"
+                        placeholder="Insira obrigatoriamente um motivo para esta alteração manual..."></textarea>
+
+                    <button id="tagModalSaveBtn" onclick="window.saveTagHistory()"
+                        class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium transition-colors flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="ph ph-floppy-disk"></i> Confirmar Edição
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="assets/js/app.js?bust=1772917751"></script>
+    <script>
+        window.initPage = () => {
+            document.getElementById('pageBody').classList.remove('hidden');
+            const nameStr = window.AppState.profile.full_name || 'Usuário';
+            document.getElementById('avatarLetter').innerText = nameStr.charAt(0).toUpperCase();
+
+            // Parse URL to get trip ID
+            const urlParams = new URLSearchParams(window.location.search);
+            const tripId = urlParams.get('id');
+
+            if (!tripId) {
+                window.location.href = 'operacional.html';
+                return;
+            }
+
+            if (typeof window.initTripFunctions === 'function') {
+                window.initTripFunctions(tripId);
+            }
+        };
+    </script>
+</body>
+
+</html>

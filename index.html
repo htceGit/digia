@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digia | Login</title>
+
+    <!-- Tailwind via Tailwind Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: {} },
+            darkMode: 'class'
+        }
+    </script>
+
+    <!-- SweetAlert2 for modern alerts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="assets/css/styles.css?bust=1772917784">
+</head>
+
+<body
+    class="min-h-screen w-full flex bg-[#0f172a] text-slate-200 font-sans antialiased overflow-hidden selection:bg-blue-500/30">
+    <script>if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme');</script>
+
+    <!-- Global Loader Overlay (Fades out via JS) -->
+    <div id="global-loader"
+        class="fixed inset-0 z-[100] bg-slate-900 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-500">
+        <div class="logo-pulse w-56 h-auto mb-4">
+            <img src="assets/img/logo/digia-color.svg" alt="DigIA Logo" class="w-full">
+        </div>
+        <p class="text-slate-500 text-sm tracking-widest uppercase font-medium mt-4">Conectando Inteligência...</p>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="flex w-full min-h-screen">
+
+        <!-- ============================================== -->
+        <!-- LEFT PANEL: BRANDING / PRESENTATION            -->
+        <!-- ============================================== -->
+        <div
+            class="auth-branding hidden lg:flex lg:w-5/12 xl:w-1/2 relative overflow-hidden bg-[#050b14] items-center justify-center flex-col p-12 z-0 border-r border-slate-800/40">
+            <!-- Animated Ambient Glows -->
+            <div
+                class="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600 rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-pulse">
+            </div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-indigo-600 rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-pulse"
+                style="animation-delay: 2s; animation-duration: 7s;"></div>
+
+            <div
+                class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiLz48L3N2Zz4=')] opacity-50">
+            </div>
+
+            <!-- Graphic / Typography -->
+            <div class="relative z-10 w-full max-w-lg">
+                <img src="assets/img/logo/digia-white.svg" alt="DigIA Logo" class="h-10 mb-12 object-contain">
+
+                <h1 class="text-4xl xl:text-5xl font-bold text-white leading-[1.1] tracking-tight mb-6">
+                    Acelere a operação da sua <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Transportadora</span>
+                    com IA.
+                </h1>
+
+                <p class="text-[1.05rem] text-slate-400 font-light leading-relaxed mb-10">
+                    Nossa inteligência artificial nativa analisa, classifica e audita romaneios, comprovantes de entrega
+                    e dezenas de outros documentos estruturados em tempo real.
+                </p>
+
+                <!-- Feature Pills -->
+                <div class="flex flex-wrap gap-3">
+                    <span
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/40 border border-slate-700/50 text-slate-300 text-sm font-medium backdrop-blur-md shadow-xl">
+                        <i class="ph ph-lightning text-blue-400 text-lg"></i> Análise Instantânea
+                    </span>
+                    <span
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/40 border border-slate-700/50 text-slate-300 text-sm font-medium backdrop-blur-md shadow-xl">
+                        <i class="ph ph-shield-check text-indigo-400 text-lg"></i> Auditoria Nativa
+                    </span>
+                    <span
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/40 border border-slate-700/50 text-slate-300 text-sm font-medium backdrop-blur-md shadow-xl">
+                        <i class="ph ph-tree-structure text-purple-400 text-lg"></i> Workflows Dinâmicos
+                    </span>
+                </div>
+            </div>
+
+            <div class="absolute bottom-8 left-12 text-slate-600 text-xs font-medium tracking-wider">
+                &copy;
+                <script>document.write(new Date().getFullYear())</script> DigIA. Todos os direitos reservados.
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- RIGHT PANEL: LOGIN / REGISTER FORMS            -->
+        <!-- ============================================== -->
+        <div
+            class="w-full lg:w-7/12 xl:w-1/2 flex items-center justify-center p-6 sm:p-12 relative flex-col login-side-bg transition-colors duration-300">
+
+            <main class="w-full max-w-md animate-fade-in relative z-10 opacity-0" id="main-content"
+                style="transition: opacity 0.5s ease 0.3s; transform: translateY(10px);">
+
+                <!-- Mobile Logo (Hidden on Desktop) -->
+                <div class="lg:hidden text-center mb-10 flex flex-col items-center">
+                    <img src="assets/img/logo/digia-white.svg" alt="DigIA" class="h-10 object-contain logo-large mb-3">
+                    <p class="text-slate-500 text-sm font-medium">Gestão Documental Inteligente</p>
+                </div>
+
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold auth-title mb-2 tracking-tight">Bem-vindo de volta</h2>
+                    <p class="auth-subtitle text-sm flex items-center gap-2">
+                        Insira suas credenciais corporativas para acessar.
+                    </p>
+                </div>
+
+                <!-- Tabs (Modernized Pill style) -->
+                <div
+                    class="flex space-x-1 auth-tab-container p-1 rounded-xl mb-8 w-full shadow-inner border border-slate-700/30 auth-tab-border">
+                    <button onclick="toggleForm('login')" id="tab-login"
+                        class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 auth-tab-active">Entrar</button>
+                    <button onclick="toggleForm('register')" id="tab-register"
+                        class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 auth-tab-inactive">Cadastrar</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" class="space-y-5 animate-fade-in block">
+                    <div>
+                        <label class="block text-sm font-medium auth-label mb-1.5 ml-1">E-mail corporativo</label>
+                        <div class="relative group">
+                            <div
+                                class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-500 text-slate-400">
+                                <i class="ph ph-envelope text-lg"></i>
+                            </div>
+                            <input type="email" id="email" required
+                                class="input-field pl-10 h-12 w-full transition-all focus:ring-2 focus:ring-blue-500/50"
+                                placeholder="usuario@transportadora.com.br">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5 ml-1 pr-1">
+                            <label class="block text-sm font-medium auth-label">Senha</label>
+                            <a href="#"
+                                class="text-xs font-semibold text-blue-500 hover:text-blue-400 transition-colors">Esqueceu
+                                a senha?</a>
+                        </div>
+                        <div class="relative group">
+                            <div
+                                class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-500 text-slate-400">
+                                <i class="ph ph-lock-key text-lg"></i>
+                            </div>
+                            <input type="password" id="password" required
+                                class="input-field pl-10 h-12 w-full transition-all focus:ring-2 focus:ring-blue-500/50"
+                                placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btnLogin"
+                        class="btn-primary h-12 w-full flex justify-center items-center mt-8 text-[15px] shadow-blue-500/25 shadow-lg group relative overflow-hidden">
+                        <span class="relative z-10 transition-transform group-hover:-translate-x-1">Acessar
+                            Plataforma</span>
+                        <i
+                            class="ph ph-arrow-right font-bold ml-2 relative z-10 opacity-0 -translate-x-4 transition-all group-hover:opacity-100 group-hover:translate-x-0"></i>
+                    </button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="registerForm" class="space-y-5 animate-fade-in hidden">
+                    <div>
+                        <label class="block text-sm font-medium auth-label mb-1.5 ml-1">Nome Completo</label>
+                        <div class="relative group">
+                            <div
+                                class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-500 text-slate-400">
+                                <i class="ph ph-user text-lg"></i>
+                            </div>
+                            <input type="text" id="regName" required
+                                class="input-field pl-10 h-12 w-full transition-all focus:ring-2 focus:ring-blue-500/50"
+                                placeholder="Seu Nome">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium auth-label mb-1.5 ml-1">E-mail corporativo</label>
+                        <div class="relative group">
+                            <div
+                                class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-500 text-slate-400">
+                                <i class="ph ph-envelope text-lg"></i>
+                            </div>
+                            <input type="email" id="regEmail" required
+                                class="input-field pl-10 h-12 w-full transition-all focus:ring-2 focus:ring-blue-500/50"
+                                placeholder="usuario@transportadora.com.br">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium auth-label mb-1.5 ml-1">Senha de Proteção</label>
+                        <div class="relative group">
+                            <div
+                                class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-500 text-slate-400">
+                                <i class="ph ph-shield-check text-lg"></i>
+                            </div>
+                            <input type="password" id="regPassword" required
+                                class="input-field pl-10 h-12 w-full transition-all focus:ring-2 focus:ring-blue-500/50"
+                                placeholder="Mínimo 6 caracteres" minlength="6">
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-slate-500 text-center px-4 pt-2 leading-relaxed">Ao se cadastrar, você
+                        concorda automática e imediatamente com nossos <a
+                            class="underline hover:text-slate-300 cursor-pointer">Termos de Uso</a> e <a
+                            class="underline hover:text-slate-300 cursor-pointer">Privacidade</a>.</p>
+
+                    <button type="submit" id="btnRegister"
+                        class="btn-primary h-12 w-full flex justify-center items-center mt-4 text-[15px] shadow-blue-500/25 shadow-lg group relative overflow-hidden">
+                        <span class="relative z-10 transition-transform group-hover:-translate-x-1">Concluir
+                            Cadastro</span>
+                        <i
+                            class="ph ph-user-plus font-bold ml-2 relative z-10 opacity-0 -translate-x-4 transition-all group-hover:opacity-100 group-hover:translate-x-0"></i>
+                    </button>
+                </form>
+            </main>
+        </div>
+    </div>
+
+    <!-- Supabase JS Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="assets/js/app.js?bust=1772917783"></script>
+
+    <script>
+        // Slightly delay fade in of main content block 
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const mc = document.getElementById('main-content');
+                if (mc) {
+                    mc.style.opacity = '1';
+                    mc.style.transform = 'translateY(0)';
+                }
+            }, 500);
+        });
+
+        function toggleForm(type) {
+            const loginForm = document.getElementById('loginForm');
+            const regForm = document.getElementById('registerForm');
+            const tabLogin = document.getElementById('tab-login');
+            const tabReg = document.getElementById('tab-register');
+
+            if (type === 'login') {
+                loginForm.classList.remove('hidden');
+                loginForm.classList.add('block');
+                regForm.classList.remove('block');
+                regForm.classList.add('hidden');
+
+                tabLogin.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 auth-tab-active';
+                tabReg.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 auth-tab-inactive';
+            } else {
+                regForm.classList.remove('hidden');
+                regForm.classList.add('block');
+                loginForm.classList.remove('block');
+                loginForm.classList.add('hidden');
+
+                tabReg.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 auth-tab-active';
+                tabLogin.className = 'flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 auth-tab-inactive';
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            UI.showLoader('btnLogin');
+            try {
+                await window.login(email, password);
+            } catch (err) {
+                console.error(err);
+                UI.error(`Falha ao autenticar: ${err.message}`);
+            } finally {
+                UI.hideLoader('btnLogin');
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+
+            UI.showLoader('btnRegister');
+            try {
+                await window.register(email, password, name);
+                UI.toast('Conta criada com sucesso! Você já pode entrar.', 'success');
+                toggleForm('login');
+                // Pre-fill login
+                document.getElementById('email').value = email;
+                document.getElementById('password').value = password;
+            } catch (err) {
+                UI.error(err.message || 'Falha ao criar conta.');
+            } finally {
+                UI.hideLoader('btnRegister');
+            }
+        });
+    </script>
+</body>
+
+</html>

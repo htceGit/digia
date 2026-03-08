@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digia | Operacional</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: {} }, darkMode: 'class' }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Flatpickr for Modern Date Selection -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <!-- TomSelect for Autocomplete -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.default.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
+    <link rel="stylesheet" href="assets/css/styles.css?bust=1772917781">
+</head>
+
+<body class="bg-slate-900 text-slate-200 min-h-screen flex hidden" id="pageBody">
+    <script>if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme');</script>
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="w-64 glass-card border-r border-slate-700/50 flex flex-col transition-all duration-300 relative z-20">
+
+        <!-- Collapse Toggle Button -->
+        <button id="btnToggleSidebar"
+            class="absolute -right-3 top-6 w-6 h-6 bg-slate-700 border border-slate-600 rounded-full text-slate-300 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-colors z-50">
+            <i class="ph ph-caret-left text-xs" id="iconToggleSidebar"></i>
+        </button>
+
+        <div class="h-20 flex items-center justify-center border-b border-slate-700/50 px-6 overflow-hidden">
+            <!-- Full White Logo -->
+            <img src="assets/img/logo/digia-white.svg" alt="DigIA" class="h-8 object-contain logo-large">
+            <!-- Icon Only Logo -->
+            <img src="assets/img/logo/digia-white.svg" alt="D" class="h-8 object-cover w-10 object-left logo-small"
+                style="object-position: 0 0;">
+        </div>
+
+        <div class="p-4 flex-1 overflow-hidden">
+            <p class="text-xs uppercase text-slate-500 font-semibold tracking-wider mb-4 px-3 menu-text">Menu</p>
+            <nav class="space-y-2">
+                <a href="operacional.html"
+                    class="flex items-center px-4 py-3 bg-indigo-600/20 text-indigo-400 rounded-lg transition-colors overflow-hidden whitespace-nowrap"
+                    title="Painel Operacional">
+                    <i class="ph ph-truck text-xl min-w-[1.25rem]"></i> <span class="ml-3 menu-text">Painel
+                        Operacional</span>
+                </a>
+                <a href="admin.html"
+                    class="flex items-center px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-all group"
+                    title="Parâmetros">
+                    <i class="ph ph-gear text-xl min-w-[1.25rem]"></i> <span class="ml-3 menu-text">Parâmetros</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="p-4 border-t border-slate-700/50 overflow-hidden">
+            <div class="flex items-center mb-4 px-2">
+                <div class="w-10 h-10 min-w-[2.5rem] rounded-full bg-indigo-400 flex items-center justify-center font-bold text-lg uppercase"
+                    id="avatarLetter">U</div>
+                <div class="ml-3 menu-text">
+                    <div class="text-sm font-medium text-white shadow-sm truncate w-32" id="headerUserName">
+                        Carregando...</div>
+                    <div class="text-xs text-slate-400" id="headerUserRole">Operacional</div>
+                </div>
+            </div>
+            <button id="btnLogout"
+                class="w-full flex items-center px-4 py-2 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-colors overflow-hidden whitespace-nowrap"
+                title="Sair">
+                <i class="ph ph-sign-out text-xl min-w-[1.25rem]"></i> <span class="ml-3 menu-text">Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <!-- Background Decorators -->
+        <div
+            class="absolute top-[10%] left-[20%] w-[40%] h-[40%] bg-indigo-600 rounded-full mix-blend-multiply filter blur-[150px] opacity-10 pointer-events-none">
+        </div>
+
+        <header
+            class="h-20 border-b border-slate-700/50 flex items-center justify-between px-8 glass sticky top-0 z-10">
+            <h1 class="text-2xl font-semibold text-white">Painel Operacional</h1>
+            <button onclick="window.OperacionalPage.openNewTripModal()"
+                class="btn-primary w-auto flex items-center py-2 px-6 shadow-indigo-500/50 font-semibold">
+                <i class="ph ph-plus-circle text-lg mr-2"></i> Criar Nova Viagem
+            </button>
+        </header>
+
+        <div class="p-8 overflow-y-auto flex-1 z-10 animate-fade-in" id="mainScroll">
+
+            <!-- Trips Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-medium text-slate-200">Últimas Viagens</h3>
+            </div>
+
+            <!-- Advanced Filters Bar -->
+            <div
+                class="glass-card p-4 rounded-xl border border-slate-700/50 mb-6 flex flex-wrap gap-4 items-end relative z-50">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="text-xs text-slate-400 uppercase font-semibold tracking-wider mb-2 block">Período (Máx
+                        30 dias)</label>
+                    <div class="relative">
+                        <i class="ph ph-calendar absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="filterDateRange"
+                            class="input-field pl-10 h-[42px] bg-slate-800/80 cursor-pointer"
+                            placeholder="Selecione as datas...">
+                    </div>
+                </div>
+
+                <div class="flex-1 min-w-[150px]">
+                    <label
+                        class="text-xs text-slate-400 uppercase font-semibold tracking-wider mb-2 block">Identificador</label>
+                    <div class="relative">
+                        <i class="ph ph-hash absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="filterIdentifier"
+                            class="input-field pl-10 h-[42px] bg-slate-800/80 w-full" placeholder="Ex: BR-1029">
+                    </div>
+                </div>
+
+                <div class="flex-1 min-w-[200px]">
+                    <label class="text-xs text-slate-400 uppercase font-semibold tracking-wider mb-2 block">Status da
+                        IA</label>
+                    <select id="filterStatus" multiple>
+                        <option value="">Todos os Status</option>
+                        <option value="approved">Aprovados (100% OK)</option>
+                        <option value="manual">Revisão Manual</option>
+                        <option value="pending">Analisando (Pendente)</option>
+                        <option value="failed">Falha de Leitura</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-2">
+                    <button id="btnFilterSearch" class="btn-primary h-[42px] flex items-center px-6"
+                        onclick="window.OperacionalPage.applyFilters()">
+                        <i class="ph ph-funnel mr-2"></i> Filtrar
+                    </button>
+                    <button id="btnFilterClear" class="btn-secondary h-[42px] flex items-center px-4"
+                        onclick="window.OperacionalPage.clearFilters()">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-xl overflow-hidden border border-slate-700/50">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-800/50 text-slate-400 text-sm">
+                            <th class="p-4 font-medium pl-6">Data</th>
+                            <th class="p-4 font-medium">Identificador</th>
+                            <th class="p-4 font-medium">Tipo de Operação</th>
+                            <th class="p-4 font-medium">Criado por</th>
+                            <th class="p-4 font-medium">Status da Viagem</th>
+                            <th class="p-4 font-medium text-right pr-6">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-trips" class="divide-y divide-slate-700/50 bg-slate-900/40">
+                        <!-- Items rendered via JS -->
+                    </tbody>
+                </table>
+
+                <!-- Pagination Loader -->
+                <div id="loader-row"
+                    class="hidden p-6 text-center text-slate-500 text-sm w-full border-t border-slate-700/50">
+                    <i class="ph ph-spinner animate-spin text-2xl mb-2 text-indigo-500 inline-block"></i>
+                    <p>Buscando viagens...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="hidden py-16 text-center">
+                    <i class="ph ph-files text-5xl text-slate-600 mb-4 inline-block"></i>
+                    <h3 class="text-lg font-medium text-slate-300">Nenhuma viagem encontrada</h3>
+                    <p class="text-slate-500 mt-2">Crie uma nova viagem para começar a adicionar documentos.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="assets/js/app.js?bust=1772917300"></script>
+    <script>
+        window.initPage = () => {
+            document.getElementById('pageBody').classList.remove('hidden');
+            const nameStr = window.AppState.profile.full_name || 'Usuário';
+            document.getElementById('avatarLetter').innerText = nameStr.charAt(0).toUpperCase();
+
+            if (typeof window.initOperacionalFunctions === 'function') {
+                window.initOperacionalFunctions();
+                window.OperacionalPage.initFilters();
+                window.OperacionalPage.loadData();
+            }
+        };
+    </script>
+</body>
+
+</html>
