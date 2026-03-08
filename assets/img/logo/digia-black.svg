@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" width="100%" height="100%">
+  <!-- Left Icon: Modern Abstract AI / Node Mapping Graphic -->
+  <g transform="translate(10, 15)">
+    <!-- Central Processing Core -->
+    <path d="M45 10 L80 30 L80 70 L45 90 L10 70 L10 30 Z" 
+          fill="none" 
+          stroke="#0f172a" 
+          stroke-width="6" 
+          stroke-linejoin="round"/>
+          
+    <!-- Inner Circuit/Neural Routes -->
+    <circle cx="45" cy="50" r="10" fill="#0f172a"/>
+    <path d="M45 50 L45 10 M45 50 L10 70 M45 50 L80 70" 
+          stroke="#0f172a" 
+          stroke-width="4" 
+          stroke-linecap="round"/>
+          
+    <circle cx="45" cy="10" r="4" fill="#0f172a"/>
+    <circle cx="10" cy="70" r="4" fill="#0f172a"/>
+    <circle cx="80" cy="70" r="4" fill="#0f172a"/>
+  </g>
+
+  <!-- Typography: "DigIA" -->
+  <g transform="translate(110, 75)">
+    <!-- 'Dig' -->
+    <text x="0" y="0" 
+          font-family="'Inter', 'Outfit', system-ui, sans-serif" 
+          font-size="64" 
+          font-weight="700" 
+          fill="#0f172a" 
+          letter-spacing="-1.5">
+      Dig
+    </text>
+    
+    <!-- 'IA' -->
+    <text x="108" y="0" 
+          font-family="'Inter', 'Outfit', system-ui, sans-serif" 
+          font-size="64" 
+          font-weight="900" 
+          fill="#0f172a" 
+          letter-spacing="-1">
+      IA
+    </text>
+    
+    <!-- Tiny abstract smart dot over the I -->
+    <circle cx="127" cy="-56" r="6" fill="#0f172a" />
+  </g>
+</svg>
